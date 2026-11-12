@@ -60,8 +60,7 @@
     "showSpeed": false
   },
   "media": {
-    "maxWidth": 240,
-    "progressUnderline": true
+    "maxWidth": 240
   },
   "launcher": {
     "maxResults": 50

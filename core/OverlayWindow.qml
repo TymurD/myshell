@@ -24,9 +24,9 @@ import qs.modules.weather
 //
 // Animation model: `t` runs 0 → 1 on open and 1 → 0 on close. The slot's rect is
 // lerp(origin, target, t).
-//  - From the bar, origin = the pill's rect: a "shell" (pill-coloured capsule) grows
-//    out of the pill into the panel rect, the content fades in on top of it, and on
-//    close everything shrinks back into the pill.
+//  - From the bar, the panel unrolls downward in place: a bar-high strip (pill
+//    coloured "shell") grows to full height and the clip reveals the content; on
+//    close it rolls back up. It never travels from the pill's position.
 //  - From a keybind, origin = target nudged up: fade + slide.
 //  - Switching panels while open (t = 1) animates the target rect: in-place morph
 //    with a content cross-fade.
@@ -66,7 +66,10 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "myshell-overlay"
-    WlrLayershell.keyboardFocus: shown ? (placement.keyboard || Registry.placement(attachedId).keyboard ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand) : WlrKeyboardFocus.None
+    // Exclusive for every panel, and constant while open: changing the keyboard mode
+    // while a panel is showing (e.g. battery → session in one pill) makes Hyprland
+    // drop the focus grab, which closed everything. Click-outside closes anyway.
+    WlrLayershell.keyboardFocus: shown ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     mask: Region {
         item: slot.visible ? slot : null
@@ -171,15 +174,16 @@ PanelWindow {
         }
     }
 
-    // Where the main panel comes from / goes back to.
+    // Where the main panel comes from / goes back to. It never travels: from the bar it
+    // unrolls downward in place (a bar-high strip growing to full height, content
+    // revealed by the clip); from a keybind it fades in with a small slide.
     QtObject {
         id: origin
 
-        readonly property var a: PanelManager.anchor
-        readonly property real x: root.fromPill ? a.x : target.x
-        readonly property real y: root.fromPill ? (a.y ?? Theme.barMargin) : target.y - Theme.panelGap * 1.5
-        readonly property real w: root.fromPill ? a.width : target.w
-        readonly property real h: root.fromPill ? (a.height ?? Theme.barHeight) : target.h
+        readonly property real x: target.x
+        readonly property real y: root.fromPill ? target.y : target.y - Theme.panelGap * 1.5
+        readonly property real w: target.w
+        readonly property real h: root.fromPill ? Math.min(Theme.barHeight, target.h) : target.h
     }
 
     // Pill-coloured capsule that grows from the pill into the panel (bar-opened only).
@@ -222,7 +226,7 @@ PanelWindow {
             focus: true
             active: root.loadedId !== ""
             source: Registry.panelUrl(root.loadedId)
-            opacity: root.fromPill ? Math.max(0, Math.min(1, (root.t - 0.35) / 0.5)) : root.t
+            opacity: root.fromPill ? Math.max(0, Math.min(1, (root.t - 0.15) / 0.5)) : root.t
             onLoaded: {
                 if (item.panelId !== undefined)
                     item.panelId = root.loadedId;

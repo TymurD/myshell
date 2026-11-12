@@ -165,6 +165,8 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 - Waybar running at the same time pushes our bar down, so panel offsets look wrong until waybar is removed.
 - No input injection tools (wtype/ydotool) are installed, so automated tests can drive the shell only through IPC. Typing, clicks and hover have to be checked by the user.
 - When testing, address your instance with `qs ipc --pid <pid>` or `qs -p <repo> ipc`. Don't `pkill -f "qs -p ."` from a shell whose own command line contains that string.
+- Hot reload can miss edits to files only reached through a panel Loader. If a change doesn't show up, `touch shell.qml`.
+- A reusable widget that takes `focus: true` from its caller and has its own focused child (e.g. a text input) must have a `FocusScope` root. Otherwise the two compete in one scope and keys go to the wrapper.
 - MPRIS `position` isn't notified: `services/Media.qml` calls `positionChanged()` on a 1 s timer while playing.
 
 ## Roadmap

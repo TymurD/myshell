@@ -1,52 +1,110 @@
 import QtQuick
+import QtQuick.Shapes
+import Quickshell.Widgets
 import qs.components
 import qs.config
 import qs.services
 import qs.theme
 
-// Mini player: play state + "Title · Artist" with a thin progress underline
-// (settings: media.progressUnderline). Left click → expanded player,
-// right click → play/pause. Hidden when no player is running.
+// Mini player: round album art ringed by a track-progress arc, then the track
+// title. Left click → expanded player, right click → play/pause. Hidden when no
+// player is running.
 BarButton {
+    id: root
+
     shown: Media.hasPlayer
     onRightClicked: Media.togglePlaying()
 
     Row {
-        spacing: 6
+        spacing: 8
 
-        Icon {
-            code: Media.playing ? 0xF03E4 : 0xF040A // pause / play
-        }
-        StyledText {
-            id: label
-            text: Media.title + (Media.artist ? "  ·  " + Media.artist : "")
-            color: Media.playing ? Theme.text : Theme.textDim
-            width: Math.min(implicitWidth, Config.media.maxWidth ?? 240)
-            elide: Text.ElideRight
+        Item {
+            id: art
 
-            // progress underline; a grandchild of the button, so it doesn't affect the pill layout
-            Rectangle {
-                visible: (Config.media.progressUnderline ?? true) && Media.length > 0
-                anchors.left: parent.left
-                anchors.top: parent.bottom
-                anchors.topMargin: 1
-                width: parent.width
-                height: 2
-                radius: 1
-                color: Theme.textFaint
+            readonly property real size: Theme.barHeight - 8
+            readonly property real ring: 2
 
-                Rectangle {
-                    width: parent.width * Media.progress
-                    height: parent.height
-                    radius: parent.radius
-                    color: Media.playing ? Theme.textDim : Theme.textMuted
-                    Behavior on width {
+            width: size
+            height: size
+            anchors.verticalCenter: parent.verticalCenter
+
+            ClippingRectangle {
+                anchors.fill: parent
+                anchors.margins: art.ring + 1
+                radius: width / 2
+                color: Theme.surface
+
+                Image {
+                    id: cover
+                    anchors.fill: parent
+                    source: Media.artUrl
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                    sourceSize.width: 64
+                    sourceSize.height: 64
+                    opacity: Media.playing ? 1 : 0.6
+
+                    Behavior on opacity {
                         NumberAnimation {
-                            duration: Anim.normal
+                            duration: Anim.fast
+                        }
+                    }
+                }
+                Icon {
+                    anchors.centerIn: parent
+                    visible: cover.status !== Image.Ready
+                    code: 0xF075A // music note
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+            }
+
+            // progress ring: faint full track + arc from 12 o'clock
+            Shape {
+                anchors.fill: parent
+                preferredRendererType: Shape.CurveRenderer
+
+                ShapePath {
+                    strokeColor: Theme.textFaint
+                    strokeWidth: art.ring
+                    fillColor: "transparent"
+                    PathAngleArc {
+                        centerX: art.size / 2
+                        centerY: art.size / 2
+                        radiusX: (art.size - art.ring) / 2
+                        radiusY: radiusX
+                        startAngle: 0
+                        sweepAngle: 360
+                    }
+                }
+                ShapePath {
+                    strokeColor: Media.playing ? Theme.text : Theme.textDim
+                    strokeWidth: art.ring
+                    fillColor: "transparent"
+                    capStyle: ShapePath.RoundCap
+                    PathAngleArc {
+                        centerX: art.size / 2
+                        centerY: art.size / 2
+                        radiusX: (art.size - art.ring) / 2
+                        radiusY: radiusX
+                        startAngle: -90
+                        sweepAngle: 360 * Media.progress
+
+                        Behavior on sweepAngle {
+                            NumberAnimation {
+                                duration: Anim.normal
+                            }
                         }
                     }
                 }
             }
+        }
+
+        StyledText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: Media.title || Media.identity
+            color: Media.playing ? Theme.text : Theme.textDim
+            width: Math.min(implicitWidth, Config.media.maxWidth ?? 240)
+            elide: Text.ElideRight
         }
     }
 }

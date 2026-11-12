@@ -4,14 +4,19 @@ import qs.theme
 
 // Rounded search input with a magnifier icon. `input` is the TextInput, so
 // callers can attach Keys handlers to it.
-Rectangle {
+//
+// Root is a FocusScope: callers set `focus: true` on the field and focus is
+// forwarded to the TextInput inside. (With a plain Rectangle root, the outer
+// `focus: true` and the input's own `focus: true` compete in the same scope and
+// the Rectangle wins, so typing goes nowhere.)
+FocusScope {
     id: root
 
     property alias text: input.text
     property alias input: input
     property string placeholder: "Search"
     property int iconCode: 0xF0349 // nf-md-magnify
-    property bool active: input.activeFocus
+    readonly property bool active: input.activeFocus
 
     // Clicked: the owning panel decides about focus (PanelManager.focus), so the
     // focus bindings in OverlayWindow are not broken by forceActiveFocus.
@@ -21,14 +26,18 @@ Rectangle {
     signal keyPressed(var event)
 
     implicitHeight: Theme.barHeight + Theme.panelGap
-    radius: height / 2
-    color: Theme.surface
-    border.color: active ? Theme.borderStrong : Theme.border
-    border.width: Theme.borderWidth
 
-    Behavior on border.color {
-        ColorAnimation {
-            duration: Anim.fast
+    Rectangle {
+        anchors.fill: parent
+        radius: height / 2
+        color: Theme.surface
+        border.color: root.active ? Theme.borderStrong : Theme.border
+        border.width: Theme.borderWidth
+
+        Behavior on border.color {
+            ColorAnimation {
+                duration: Anim.fast
+            }
         }
     }
 
