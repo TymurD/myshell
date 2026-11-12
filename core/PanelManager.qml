@@ -23,6 +23,10 @@ Singleton {
     property string pillSide: ""    // "left" | "center" | "right" when source === "bar"
     property var anchor: null       // { x, y, width, height } of the pill, in bar-window coords
     property string focusId: ""     // openId or attachedId: who gets keyboard focus
+    // True when the current panel replaced another one in the SAME spot (same pill,
+    // same source, same screen): the overlay then morphs in place. Any other switch
+    // (e.g. left pill → right pill) snaps to the new spot instead of sliding across.
+    property bool morph: false
 
     readonly property bool isOpen: openId !== ""
     // Panel opened beside openId ("" = none) and the side it sits on.
@@ -61,6 +65,10 @@ Singleton {
             return;
         }
         const host = hostOf(id);
+        const nextSide = pill ? (pill.side ?? "") : "";
+        const nextScreen = pill ? (pill.barScreen?.name ?? "") : (Hyprland.focusedMonitor?.name ?? "");
+        // Set before anything else changes, so the overlay's Behaviors see it.
+        morph = isOpen && src === source && nextSide === pillSide && nextScreen === screenName;
         if (pill) {
             const p = pill.mapToItem(null, 0, 0);
             anchor = {

@@ -28,8 +28,9 @@ import qs.modules.weather
 //    coloured "shell") grows to full height and the clip reveals the content; on
 //    close it rolls back up. It never travels from the pill's position.
 //  - From a keybind, origin = target nudged up: fade + slide.
-//  - Switching panels while open (t = 1) animates the target rect: in-place morph
-//    with a content cross-fade.
+//  - Switching panels while open (t = 1) within the same pill animates the target
+//    rect: in-place morph with a content cross-fade. A switch to another pill or
+//    source snaps to the new spot and fades in (PanelManager.morph).
 // An attached panel (placement.attach) gets its own slot beside the main one.
 PanelWindow {
     id: root
@@ -146,28 +147,28 @@ PanelWindow {
         property real y: root.panelY(h)
 
         Behavior on w {
-            enabled: root.settled
+            enabled: root.settled && PanelManager.morph
             NumberAnimation {
                 duration: Anim.normal
                 easing.type: Anim.standard
             }
         }
         Behavior on h {
-            enabled: root.settled
+            enabled: root.settled && PanelManager.morph
             NumberAnimation {
                 duration: Anim.normal
                 easing.type: Anim.standard
             }
         }
         Behavior on x {
-            enabled: root.settled
+            enabled: root.settled && PanelManager.morph
             NumberAnimation {
                 duration: Anim.normal
                 easing.type: Anim.standard
             }
         }
         Behavior on y {
-            enabled: root.settled
+            enabled: root.settled && PanelManager.morph
             NumberAnimation {
                 duration: Anim.normal
                 easing.type: Anim.standard

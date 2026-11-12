@@ -29,7 +29,9 @@ PanelSurface {
     Connections {
         target: Notifications
         function onUnreadChanged(): void {
-            root.markRead();
+            // deferred: marking read inside unread's own change handler re-evaluates
+            // `unread` mid-update (binding loop)
+            Qt.callLater(root.markRead);
         }
     }
     Binding {
