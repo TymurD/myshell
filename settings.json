@@ -57,5 +57,12 @@
   },
   "media": {
     "maxWidth": 240
-  }
+  },
+  "launcher": {},
+  "clipboard": {},
+  "notifications": {},
+  "lock": {},
+  "session": {},
+  "sysstats": {},
+  "timers": {}
 }

@@ -19,6 +19,13 @@ Singleton {
     readonly property var weather: adapter.weather
     readonly property var network: adapter.network
     readonly property var media: adapter.media
+    readonly property var launcher: adapter.launcher
+    readonly property var clipboard: adapter.clipboard
+    readonly property var notifications: adapter.notifications
+    readonly property var lock: adapter.lock
+    readonly property var session: adapter.session
+    readonly property var sysstats: adapter.sysstats
+    readonly property var timers: adapter.timers
 
     FileView {
         path: Quickshell.shellPath("settings.json")
@@ -63,6 +70,13 @@ Singleton {
             property var media: ({
                     maxWidth: 240
                 })
+            property var launcher: ({})
+            property var clipboard: ({})
+            property var notifications: ({})
+            property var lock: ({})
+            property var session: ({})
+            property var sysstats: ({})
+            property var timers: ({})
         }
     }
 }

@@ -65,44 +65,44 @@ Singleton {
                 }
             },
             dashboard: {
-                url: "",
+                url: "dashboard/DashboardPanel.qml",
                 placement: {
                     fromIpc: "center-top"
                 }
             },
             session: {
-                url: "",
+                url: "session/SessionPanel.qml",
                 placement: {
                     fromIpc: "center"
                 }
             },
             media: {
-                url: "",
+                url: "media/MediaPanel.qml",
                 placement: {
                     fromIpc: "center-top"
                 }
             },
             network: {
-                url: "",
+                url: "network/NetworkPanel.qml",
                 placement: {
                     fromIpc: "center-top"
                 }
             },
             notifications: {
-                url: "",
+                url: "notifications/NotificationsPanel.qml",
                 placement: {
                     fromIpc: "center-top"
                 }
             },
             launcher: {
-                url: "",
+                url: "launcher/LauncherPanel.qml",
                 placement: {
                     fromIpc: "center",
                     keyboard: true
                 }
             },
             clipboard: {
-                url: "",
+                url: "clipboard/ClipboardPanel.qml",
                 placement: {
                     attach: {
                         to: "launcher",
@@ -111,7 +111,7 @@ Singleton {
                 }
             },
             timers: {
-                url: "",
+                url: "timers/TimersPanel.qml",
                 placement: {
                     fromIpc: "center-top"
                 }
