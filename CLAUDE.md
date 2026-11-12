@@ -42,7 +42,7 @@ scripts/             helper shell scripts (share picker, palette apply/reload, .
 
 Imports use Quickshell's `qs.` root (`import qs.services`, `import qs.theme`, …). No qmldir files needed. Singletons need `pragma Singleton` + a `Singleton {}` root.
 
-**Module folders must be imported statically somewhere.** Quickshell only scans a folder as a module when a statically loaded file imports it. Panels are loaded by URL through a Loader, so `core/OverlayWindow.qml` imports every panel/card folder (`import qs.modules.<id>`). **When you add a new panel or card folder, add its import there**, or its sibling files fail with "X is not a type". Global UI modules (lock, polkit, notifications, keyboard OSD) are imported and instantiated in `shell.qml`. Files inside a module folder import their own folder (`import qs.modules.<id>`) to use siblings.
+**Module folders must be imported statically somewhere.** Quickshell only scans a folder as a module when a statically loaded file imports it. Panels are loaded by URL through a Loader, so `core/OverlayWindow.qml` imports every panel/card folder (`import qs.modules.<id>`). **When you add a new panel or card folder, add its import there** (bar-module folders whose files use siblings go in `core/BarWindow.qml`, e.g. `qs.modules.tray`), or its sibling files fail with "X is not a type". Global UI modules (lock, polkit, notifications, keyboard OSD) are imported and instantiated in `shell.qml`. Files inside a module folder import their own folder (`import qs.modules.<id>`) to use siblings.
 
 Avoid naming a QML file after a QtQuick type (`Text`, `Calendar`, …): it shadows or fails to resolve. Use `StyledText`, `MonthCalendar`, etc.
 
@@ -83,6 +83,7 @@ Three pills (left / center / right), each one continuous capsule with no separat
   - `fromIpc`: `"center-top"` (default for keybinds) | `"center"` | `"edge-left"` | `"edge-right"`.
   - `"center"` = vertically centered on screen (launcher, session menu via keybind).
   - `keyboard: true` gives the panel exclusive keyboard focus (launcher, clipboard, lock-style input).
+  - `fillHeight: true`: stretch from under the bar down to the bottom gap (notification center).
   - `attach: { to, side }`: open beside another panel (clipboard sits left of the launcher). Opening the attached panel directly opens its host with the attached one focused. `PanelManager.focusId` / `moveFocus("left"|"right")` move keyboard focus between them.
 - Animations: a bar-opened panel grows out of its pill (a capsule in pill colour expands into the panel rect, content fades in late) and shrinks back on close. Keybind-opened panels fade/slide. The overlay keeps the last panel loaded while it animates out. Click-outside grab activates only after the open animation, so the opening click doesn't close it.
 - Services can react to a panel being open via `PanelManager.openId` (e.g. Network scans only while its panel is open, SysStats polls only while a card is visible).
@@ -167,6 +168,7 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 - When testing, address your instance with `qs ipc --pid <pid>` or `qs -p <repo> ipc`. Don't `pkill -f "qs -p ."` from a shell whose own command line contains that string.
 - Hot reload can miss edits to files only reached through a panel Loader. If a change doesn't show up, `touch shell.qml`.
 - A reusable widget that takes `focus: true` from its caller and has its own focused child (e.g. a text input) must have a `FocusScope` root. Otherwise the two compete in one scope and keys go to the wrapper.
+- A QML file can't instantiate its own type (even inside a Component). For recursive UI (tray submenus), load it by URL: `Loader.setSource(Qt.resolvedUrl("Self.qml"), props)`.
 - MPRIS `position` isn't notified: `services/Media.qml` calls `positionChanged()` on a 1 s timer while playing.
 
 ## Roadmap
@@ -183,5 +185,5 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 - [ ] **Switch-over**: install cliphist, set allow_session_lock_restore, swap waybar/mako/polkit-gnome/fuzzel/hyprlock for QS in hyprland.lua, then check typing, clicks and hover by hand (none of it could be automated)
 - [ ] **P7** Palette center (switch/save palettes, `theme set` IPC), screenshare picker, wallpaper picker + matugen + app reload scripts
 - [ ] Workspaces: app icons per workspace
-- [ ] Tray menus styled with our theme (currently native DBusMenu popups)
+- [x] Tray menus styled with our theme (`modules/tray/TrayMenu.qml`, submenus expand inline)
 - [ ] Move `modules/launcher/SearchField.qml` and the duplicated `IconButton`s into `components/`

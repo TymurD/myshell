@@ -4,8 +4,10 @@ import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import qs.components
 import qs.theme
+import qs.modules.tray
 
-// Status-notifier icons. Left click → activate, right click (or menu-only items) → app menu.
+// Status-notifier icons. Left click → activate, right click (or menu-only items) →
+// themed app menu (TrayMenu), middle click → secondary activate.
 BarButton {
     id: root
 
@@ -32,10 +34,8 @@ BarButton {
                     if (mouse.button === Qt.MiddleButton) {
                         modelData.secondaryActivate();
                     } else if (mouse.button === Qt.RightButton || modelData.onlyMenu) {
-                        if (modelData.hasMenu) {
-                            const p = entry.mapToItem(null, 0, entry.height);
-                            modelData.display(QsWindow.window, p.x, p.y + 8);
-                        }
+                        if (modelData.hasMenu)
+                            menu.shown && menu.trayItem === modelData ? menu.close() : menu.open(modelData, entry);
                     } else {
                         modelData.activate();
                     }
@@ -48,5 +48,9 @@ BarButton {
                 }
             }
         }
+    }
+
+    TrayMenu {
+        id: menu
     }
 }

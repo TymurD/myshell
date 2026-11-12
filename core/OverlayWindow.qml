@@ -140,7 +140,8 @@ PanelWindow {
         id: target
 
         property real w: loader.item?.implicitWidth ?? 0
-        property real h: loader.item?.implicitHeight ?? 0
+        // placement.fillHeight: stretch down to the bottom gap (same as the outer gap above)
+        property real h: root.placement.fillHeight ? root.height - (Theme.barMargin + Theme.barHeight + Theme.panelGap) - Theme.barMargin : loader.item?.implicitHeight ?? 0
         property real x: root.panelX(w)
         property real y: root.panelY(h)
 

@@ -77,8 +77,7 @@
     "monitor": "focused",
     "toastWidth": 380,
     "bodyMaxLines": 4,
-    "centerWidth": 420,
-    "centerMaxHeight": 620
+    "centerWidth": 420
   },
   "lock": {
     "useQuickshell": true,

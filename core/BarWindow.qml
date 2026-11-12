@@ -4,6 +4,9 @@ import Quickshell.Wayland
 import qs.config
 import qs.theme
 import qs.components
+// Bar modules are loaded by URL too; import folders whose files use siblings
+// (see the note in OverlayWindow.qml).
+import qs.modules.tray
 
 // Top bar for one screen: three independent pills (left / center / right).
 PanelWindow {

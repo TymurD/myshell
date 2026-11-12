@@ -8,12 +8,13 @@ import qs.theme
 
 // Notification center: DND + clear all, history grouped by app (collapsible,
 // per-app mute + dismiss), muted apps list. Opening it marks everything read.
+// Height is set by the overlay (placement.fillHeight: down to the bottom gap); the
+// list takes whatever is left.
 PanelSurface {
     id: root
 
     property string panelId: "notifications"
     readonly property bool isOpen: PanelManager.openId === panelId
-    readonly property int maxListHeight: Notifications.cfg.centerMaxHeight ?? 620
     property var collapsed: ({})   // appName → true
 
     implicitWidth: Notifications.cfg.centerWidth ?? 420
@@ -90,11 +91,13 @@ PanelSurface {
         // ── empty state ──
         ColumnLayout {
             Layout.fillWidth: true
-            Layout.topMargin: 24
-            Layout.bottomMargin: 24
+            Layout.fillHeight: true
             visible: Notifications.count === 0
             spacing: 6
 
+            Item {
+                Layout.fillHeight: true
+            }
             Icon {
                 Layout.alignment: Qt.AlignHCenter
                 code: Notifications.dnd ? 0xF009B : 0xF009C
@@ -113,13 +116,16 @@ PanelSurface {
                 color: Theme.textMuted
                 font.pixelSize: Theme.fontSizeSmall
             }
+            Item {
+                Layout.fillHeight: true
+            }
         }
 
         // ── grouped list ──
         Flickable {
             id: flick
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(groupsCol.implicitHeight, root.maxListHeight)
+            Layout.fillHeight: true
             visible: Notifications.count > 0
             contentHeight: groupsCol.implicitHeight
             clip: true

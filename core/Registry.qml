@@ -55,6 +55,7 @@ Singleton {
     // placement.fromBar: optional per-panel override of that: "pill" | "edge-left" | "edge-right"
     // placement.fromIpc: "pill-less" position for keybinds: "center-top" | "center" | "edge-left" | "edge-right"
     // placement.keyboard: panel needs exclusive keyboard focus (typing)
+    // placement.fillHeight: panel stretches from under the bar to the bottom gap
     // placement.attach: { to: <panelId>, side: "left"|"right" } opens beside another panel
     // Any field can be overridden per panel in settings.json → "panels": { <id>: {...} }.
     readonly property var panels: ({
@@ -92,7 +93,8 @@ Singleton {
             notifications: {
                 url: "notifications/NotificationsPanel.qml",
                 placement: {
-                    fromIpc: "center-top"
+                    fromIpc: "center-top",
+                    fillHeight: true
                 }
             },
             launcher: {
