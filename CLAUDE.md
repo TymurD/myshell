@@ -77,7 +77,7 @@ Three pills (left / center / right), each one continuous capsule with no separat
 
 - Only one panel is open at a time (`core/PanelManager.qml`: `open/toggle/close(id, source, pill)`). The exception is launcher + clipboard, which open as a pair.
 - Panels render in a per-screen fullscreen transparent `OverlayWindow`. Its input mask covers only the visible panel. Click-outside (HyprlandFocusGrab) and Esc close the panel.
-- **Opened from the bar, position is decided by the pill, not the button.** Every button in one pill opens its panel in the same spot. Clicking another button in that pill while a panel is open swaps the content in place: size and position animate and the content cross-fades. The spot per pill is in `settings.json` → `bar.panelAt`. Defaults: left → `"edge-left"`, center → `"pill"` (top, centered under the center pill, used by the dashboard), right → `"edge-right"`. Panels always hang from the top, just below the bar.
+- **Opened from the bar, position is decided by the pill, not the button.** Every button in one pill opens its panel in the same spot. Clicking another button while a panel is open swaps to the new panel: it snaps to its own rect and the content fades in. Don't animate geometry between panels; it reads as the panel spawning in the wrong spot and sliding. The spot per pill is in `settings.json` → `bar.panelAt`. Defaults: left → `"edge-left"`, center → `"pill"` (top, centered under the center pill, used by the dashboard), right → `"edge-right"`. Panels always hang from the top, just below the bar.
 - Per-panel placement lives in `Registry.panels[id].placement` and can be overridden in `settings.json` → `panels.<id>`:
   - `fromBar` (optional): overrides the pill's spot for this one panel. Avoid it, since it breaks the "same place per pill" rule.
   - `fromIpc`: `"center-top"` (default for keybinds) | `"center"` | `"edge-left"` | `"edge-right"`.
@@ -174,7 +174,7 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 ## Roadmap
 
 - [x] **P1 Skeleton**: config/theme/palette, Registry, PanelManager, OverlayWindow, 3-pill bar, IPC
-- [x] Per-pill panel placement, in-place swap, pill → panel grow animation, attached panels
+- [x] Per-pill panel placement, snap + fade swap, drop-down open animation, attached panels
 - [x] Bar items: session, workspaces, keyboard, battery, clock (+ running timer), media (+ progress underline), tray, network, notifications (unread count / DND)
 - [x] Battery panel with TLP power profiles
 - [x] Lock screen (WlSessionLock + PAM, blurred screencopy), polkit agent dialog, session menu (two-click confirm)

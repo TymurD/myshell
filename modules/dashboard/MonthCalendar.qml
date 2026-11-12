@@ -28,15 +28,22 @@ Item {
 
     // Recomputed once per day, not every second.
     readonly property string todayKey: Time.format("yyyy-MM-dd")
-    readonly property date today: new Date(Number(todayKey.slice(0, 4)), Number(todayKey.slice(5, 7)) - 1, Number(todayKey.slice(8, 10)))
+    // `var`, built from new Date(): a `date`-typed property came back invalid when
+    // the calendar was created mid-switch (header showed "January 0").
+    readonly property var today: {
+        todayKey; // re-evaluate when the day changes
+        const n = new Date();
+        return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+    }
 
-    property int viewYear: today.getFullYear()
-    property int viewMonth: today.getMonth()
+    property int viewYear: new Date().getFullYear()
+    property int viewMonth: new Date().getMonth()
     readonly property bool showingToday: viewYear === today.getFullYear() && viewMonth === today.getMonth()
 
     function goToday(): void {
-        viewYear = today.getFullYear();
-        viewMonth = today.getMonth();
+        const n = new Date(); // not `today`: may run before that binding exists
+        viewYear = n.getFullYear();
+        viewMonth = n.getMonth();
     }
     function shift(n: int): void {
         const d = new Date(viewYear, viewMonth + n, 1);
@@ -47,6 +54,7 @@ Item {
     // Snap back to the current month whenever the dashboard is shown again.
     onVisibleChanged: if (visible)
         goToday()
+    Component.onCompleted: goToday()
     onTodayKeyChanged: goToday()
 
     function isoWeek(d: date): int {

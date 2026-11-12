@@ -28,9 +28,8 @@ import qs.modules.weather
 //    coloured "shell") grows to full height and the clip reveals the content; on
 //    close it rolls back up. It never travels from the pill's position.
 //  - From a keybind, origin = target nudged up: fade + slide.
-//  - Switching panels while open (t = 1) within the same pill animates the target
-//    rect: in-place morph with a content cross-fade. A switch to another pill or
-//    source snaps to the new spot and fades in (PanelManager.morph).
+//  - Switching panels while open (t = 1) snaps to the new panel's rect and fades
+//    the new content in. No geometry animation between panels.
 // An attached panel (placement.attach) gets its own slot beside the main one.
 PanelWindow {
     id: root
@@ -136,7 +135,8 @@ PanelWindow {
         return Theme.barMargin + Theme.barHeight + Theme.panelGap;
     }
 
-    // Target rect of the main panel. Animated while settled, so a swap morphs in place.
+    // Target rect of the main panel. Never animated: switching panels snaps to the new
+    // rect and the new content fades in (an animated rect slid panels across the bar).
     QtObject {
         id: target
 
@@ -146,34 +146,6 @@ PanelWindow {
         property real x: root.panelX(w)
         property real y: root.panelY(h)
 
-        Behavior on w {
-            enabled: root.settled && PanelManager.morph
-            NumberAnimation {
-                duration: Anim.normal
-                easing.type: Anim.standard
-            }
-        }
-        Behavior on h {
-            enabled: root.settled && PanelManager.morph
-            NumberAnimation {
-                duration: Anim.normal
-                easing.type: Anim.standard
-            }
-        }
-        Behavior on x {
-            enabled: root.settled && PanelManager.morph
-            NumberAnimation {
-                duration: Anim.normal
-                easing.type: Anim.standard
-            }
-        }
-        Behavior on y {
-            enabled: root.settled && PanelManager.morph
-            NumberAnimation {
-                duration: Anim.normal
-                easing.type: Anim.standard
-            }
-        }
     }
 
     // Where the main panel comes from / goes back to. It never travels: from the bar it
