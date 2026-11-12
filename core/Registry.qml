@@ -73,7 +73,8 @@ Singleton {
             session: {
                 url: "session/SessionPanel.qml",
                 placement: {
-                    fromIpc: "center"
+                    fromIpc: "center",
+                    keyboard: true
                 }
             },
             media: {

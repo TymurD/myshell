@@ -45,24 +45,56 @@
       "memory"
     ],
     "right": [
-      "weather"
-    ]
+      "weather",
+      "forecast"
+    ],
+    "weekStart": "monday",
+    "weekNumbers": true
   },
   "weather": {
     "latitude": null,
-    "longitude": null
+    "longitude": null,
+    "units": "metric"
   },
   "network": {
     "showSpeed": false
   },
   "media": {
-    "maxWidth": 240
+    "maxWidth": 240,
+    "progressUnderline": true
   },
-  "launcher": {},
-  "clipboard": {},
-  "notifications": {},
-  "lock": {},
-  "session": {},
-  "sysstats": {},
+  "launcher": {
+    "maxResults": 50
+  },
+  "clipboard": {
+    "maxItems": 500
+  },
+  "notifications": {
+    "defaultTimeout": 5000,
+    "criticalSticky": true,
+    "dndAllowCritical": true,
+    "historyLimit": 100,
+    "maxToasts": 5,
+    "monitor": "focused",
+    "toastWidth": 380,
+    "bodyMaxLines": 4,
+    "centerWidth": 420,
+    "centerMaxHeight": 620
+  },
+  "lock": {
+    "useQuickshell": true,
+    "command": "hyprlock",
+    "pamConfig": "login",
+    "screencopy": true
+  },
+  "session": {
+    "dryRun": false,
+    "lockBeforeSuspend": true,
+    "confirmTimeout": 3000
+  },
+  "sysstats": {
+    "interval": 2000,
+    "gpuInterval": 10000
+  },
   "timers": {}
 }

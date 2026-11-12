@@ -29,6 +29,9 @@ Singleton {
     readonly property int fontSize: 17
     readonly property int fontSizeSmall: 13
     readonly property int fontSizeLarge: 22
+    readonly property int fontSizeXL: 32        // panel headlines (big date, temps, profile)
+    readonly property int fontSizeDisplay: 44   // hero numbers (weather temp, empty-state glyphs)
+    readonly property int fontSizeHuge: 110     // lock-screen clock
 
     // geometry
     readonly property int barHeight: Config.bar.height ?? 34

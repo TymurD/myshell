@@ -4,10 +4,10 @@ import QtQuick
 import Quickshell
 
 Singleton {
-    readonly property date now: clock.date
+    readonly property date now: clock?.date ?? new Date()
 
     function format(fmt: string): string {
-        return Qt.formatDateTime(clock.date, fmt);
+        return Qt.formatDateTime(now, fmt);
     }
 
     SystemClock {

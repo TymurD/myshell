@@ -2,6 +2,7 @@
 import QtQuick
 import Quickshell
 import qs.core
+import qs.services
 import qs.modules.lock
 import qs.modules.polkit
 import qs.modules.notifications
@@ -35,4 +36,7 @@ ShellRoot {
     PolkitDialog {}
     NotificationPopups {}
     KeyboardOsd {}
+
+    // Touch singletons that must run from startup (IPC targets, saved alarms).
+    Component.onCompleted: void Timers.loaded
 }
