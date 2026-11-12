@@ -1,0 +1,61 @@
+{
+  "palette": "default",
+  "bar": {
+    "height": 34,
+    "margin": 12,
+    "left": [
+      "session",
+      "workspaces",
+      "keyboard",
+      "battery"
+    ],
+    "center": [
+      "clock",
+      "media"
+    ],
+    "right": [
+      "tray",
+      "network",
+      "notifications"
+    ],
+    "panelAt": {
+      "left": "edge-left",
+      "center": "pill",
+      "right": "edge-right"
+    }
+  },
+  "panels": {},
+  "workspaces": {
+    "persistent": 6
+  },
+  "keyboard": {
+    "names": {
+      "English (US)": "EN",
+      "Russian": "RU",
+      "Ukrainian": "UA"
+    }
+  },
+  "clock": {
+    "format": "HH:mm"
+  },
+  "dashboard": {
+    "left": [
+      "cpu",
+      "gpu",
+      "memory"
+    ],
+    "right": [
+      "weather"
+    ]
+  },
+  "weather": {
+    "latitude": null,
+    "longitude": null
+  },
+  "network": {
+    "showSpeed": false
+  },
+  "media": {
+    "maxWidth": 240
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "bg": "#a6111111",
+  "bgSolid": "#ee0b0b0b",
+  "surface": "#1a1a1a",
+  "surfaceHover": "#050505",
+  "border": "#2e2e2e",
+  "borderStrong": "#555555",
+  "text": "#f2f2f2",
+  "textDim": "#8a8a8a",
+  "textMuted": "#707070",
+  "textFaint": "#2a2a2a",
+  "accent": "#f2f2f2",
+  "urgent": "#e06c75"
+}
