@@ -52,8 +52,8 @@
     "weekNumbers": true
   },
   "weather": {
-    "latitude": null,
-    "longitude": null,
+    "latitude": 50.45,
+    "longitude": 30.52,
     "units": "metric"
   },
   "network": {

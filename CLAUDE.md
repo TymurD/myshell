@@ -130,7 +130,8 @@ hl.exec_cmd("wl-paste --watch cliphist store")     -- clipboard history
 local qs = "qs -c myshell ipc call "
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(qs .. "panels toggle launcher"))
 hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_cmd(qs .. "lock lock"))
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(qs .. "panels toggle clipboard"))   -- conflicts with current preselect bind
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(qs .. "panels toggle clipboard"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(qs .. "panels toggle notifications"))
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(qs .. "panels toggle dashboard"))
 hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd(qs .. "panels toggle session"))
 -- misc: allow_session_lock_restore = true  (MUST be set before using the QS lock screen)
