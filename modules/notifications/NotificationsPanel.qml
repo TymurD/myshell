@@ -88,36 +88,34 @@ PanelSurface {
             }
         }
 
-        // ── empty state ──
-        ColumnLayout {
+        // ── empty state: a full-size box with its content centred both ways ──
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             visible: Notifications.count === 0
-            spacing: 6
 
-            Item {
-                Layout.fillHeight: true
-            }
-            Icon {
-                Layout.alignment: Qt.AlignHCenter
-                code: Notifications.dnd ? 0xF009B : 0xF009C
-                font.pixelSize: Theme.fontSizeDisplay
-                color: Theme.textMuted
-            }
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                text: "No notifications"
-                color: Theme.textDim
-            }
-            StyledText {
-                Layout.alignment: Qt.AlignHCenter
-                visible: Notifications.dnd
-                text: "Do not disturb is on"
-                color: Theme.textMuted
-                font.pixelSize: Theme.fontSizeSmall
-            }
-            Item {
-                Layout.fillHeight: true
+            Column {
+                anchors.centerIn: parent
+                spacing: 6
+
+                Icon {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    code: Notifications.dnd ? 0xF009B : 0xF009C
+                    font.pixelSize: Theme.fontSizeDisplay
+                    color: Theme.textMuted
+                }
+                StyledText {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "No notifications"
+                    color: Theme.textDim
+                }
+                StyledText {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: Notifications.dnd
+                    text: "Do not disturb is on"
+                    color: Theme.textMuted
+                    font.pixelSize: Theme.fontSizeSmall
+                }
             }
         }
 
