@@ -8,7 +8,7 @@ import qs.core
 // Owns "which panel is open, where, and why". UI (OverlayWindow) only reacts to this.
 // Panels opened from the bar are anchored to the PILL (not the button), so every
 // button in one pill opens its panel in the same place; switching between them
-// swaps the content (snap + fade).
+// rolls the old panel up while the new one unrolls (OverlayWindow's two slots).
 //
 // Attached panels: a panel whose placement.attach.to === X opens beside X whenever
 // X opens (e.g. clipboard left of launcher). Opening an attached panel directly
