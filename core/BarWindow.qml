@@ -30,6 +30,14 @@ PanelWindow {
         onPressed: PanelManager.dismissAll()
     }
 
+    // The panel focus grab whitelists the bar, and inside a grab Hyprland gives
+    // keyboard focus to the whitelisted surface under the pointer. So with the cursor
+    // over the bar, keys land here instead of in the overlay: handle Esc here too.
+    Item {
+        focus: true
+        Keys.onEscapePressed: PanelManager.dismissAll()
+    }
+
     Pill {
         anchors.left: parent.left
         anchors.leftMargin: Theme.barMargin
