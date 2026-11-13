@@ -71,7 +71,7 @@ Three pills (left / center / right), each one continuous capsule with no separat
 
 | left | center | right |
 |---|---|---|
-| session, workspaces, keyboard, battery | clock, timers, media | brightness, tray, network, notifications |
+| session, workspaces, keyboard, battery | clock, timers, media | tray, brightness, network, notifications |
 
 ## Panels and placement
 

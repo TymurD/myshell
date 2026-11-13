@@ -15,8 +15,8 @@
       "media"
     ],
     "right": [
-      "brightness",
       "tray",
+      "brightness",
       "network",
       "notifications"
     ],
