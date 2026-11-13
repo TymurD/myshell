@@ -26,10 +26,11 @@ MouseArea {
     readonly property int pad: toast ? Theme.panelPadding - 4 : 10
 
     hoverEnabled: true
-    acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+    // Toast: right/middle click hides it (it stays in history), left click runs the default action.
+    acceptedButtons: toast ? Qt.LeftButton | Qt.MiddleButton | Qt.RightButton : Qt.LeftButton | Qt.MiddleButton
     cursorShape: Notifications.hasDefaultAction(uid) && live ? Qt.PointingHandCursor : Qt.ArrowCursor
     onClicked: mouse => {
-        if (mouse.button === Qt.MiddleButton || !root.live || !Notifications.hasDefaultAction(root.uid)) {
+        if (mouse.button !== Qt.LeftButton || !root.live || !Notifications.hasDefaultAction(root.uid)) {
             if (root.toast)
                 root.closeClicked();
             return;
