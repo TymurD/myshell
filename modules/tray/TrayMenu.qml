@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import qs.components
+import qs.core
 import qs.theme
 import qs.modules.tray
 
@@ -39,10 +40,20 @@ PopupWindow {
     visible: shown && trayItem !== null
     color: "transparent"
 
+    // Same shape as the panel grab in OverlayWindow: arm only once the popup is
+    // mapped, and whitelist the bar too, so clicking the tray icon toggles the menu
+    // instead of the grab closing it on press and the click reopening it.
     HyprlandFocusGrab {
-        active: root.visible
-        windows: [root]
+        active: root.visible && root.backingWindowVisible
+        windows: [root, root.anchor.window]
         onCleared: root.close()
+    }
+
+    Connections {
+        target: PanelManager
+        function onDismissRequested(): void {
+            root.close();
+        }
     }
 
     PanelSurface {

@@ -4,6 +4,7 @@ import Quickshell.Wayland
 import qs.config
 import qs.theme
 import qs.components
+import qs.core
 // Bar modules are loaded by URL too; import folders whose files use siblings
 // (see the note in OverlayWindow.qml).
 import qs.modules.tray
@@ -20,6 +21,14 @@ PanelWindow {
     implicitHeight: Theme.barHeight + Theme.barMargin
     color: "transparent"
     WlrLayershell.namespace: "myshell-bar"
+
+    // Empty bar space (between and around the pills) dismisses open panels/menus.
+    // Declared before the pills so their buttons stay on top.
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.AllButtons
+        onPressed: PanelManager.dismissAll()
+    }
 
     Pill {
         anchors.left: parent.left

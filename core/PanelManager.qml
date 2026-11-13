@@ -85,6 +85,15 @@ Singleton {
         openId = "";
     }
 
+    // Close everything that hangs off the bar: the open panel plus bar-owned popups
+    // (tray menu), which listen to dismissRequested. Used for clicks on empty bar space,
+    // which focus grabs can't catch because the bar is whitelisted in them.
+    signal dismissRequested
+    function dismissAll(): void {
+        close();
+        dismissRequested();
+    }
+
     // Keyboard focus between a panel and its attached neighbour.
     function focus(id: string): void {
         if (isShowing(id))
