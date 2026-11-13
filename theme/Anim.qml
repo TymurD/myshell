@@ -8,6 +8,7 @@ Singleton {
     readonly property int fast: 150
     readonly property int normal: 250
     readonly property int slow: 400
+    readonly property int stagger: 40   // delay between items of a list animating one after another
 
     readonly property int standard: Easing.OutCubic
     readonly property int emphasized: Easing.OutBack
