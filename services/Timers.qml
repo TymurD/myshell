@@ -150,12 +150,15 @@ Singleton {
         const ms = seconds * 1000;
         const n = (name ?? "").trim();
         const list = timers.slice();
+        // Refresh `now` first: the tick is stopped while nothing runs, so `now` can be
+        // stale and the new timer would briefly show extra time until the next tick.
+        now = Date.now();
         list.push({
             id: newId(),
             name: n !== "" ? n : formatDuration(ms) + " timer",
             duration: ms,
             state: "running",
-            endAt: Date.now() + ms,
+            endAt: now + ms,
             remaining: ms
         });
         timers = list;
@@ -163,6 +166,7 @@ Singleton {
     }
 
     function update(id: string, fn: var): void {
+        now = Date.now();   // see start(): resume/restart would otherwise read a stale `now`
         timers = timers.map(t => t.id === id ? fn(Object.assign({}, t)) : t);
         changed();
     }
