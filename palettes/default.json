@@ -1,8 +1,9 @@
 {
   "bg": "#a6111111",
   "bgSolid": "#ee0b0b0b",
-  "surface": "#1a1a1a",
-  "surfaceHover": "#050505",
+  "bgPanel": "#b80b0b0b",
+  "surface": "#1affffff",
+  "surfaceHover": "#40000000",
   "border": "#2e2e2e",
   "borderStrong": "#555555",
   "text": "#f2f2f2",

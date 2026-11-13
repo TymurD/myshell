@@ -12,7 +12,8 @@ Singleton {
 
     // colors
     readonly property color bg: p.bg
-    readonly property color bgSolid: p.bgSolid
+    readonly property color bgSolid: p.bgSolid      // opaque; also used as text on accent fills
+    readonly property color bgPanel: p.bgPanel      // translucent panel background (compositor blurs behind it)
     readonly property color surface: p.surface
     readonly property color surfaceHover: p.surfaceHover
     readonly property color border: p.border
@@ -54,8 +55,9 @@ Singleton {
 
             property string bg: "#a6111111"
             property string bgSolid: "#ee0b0b0b"
-            property string surface: "#1a1a1a"
-            property string surfaceHover: "#050505"
+            property string bgPanel: "#b80b0b0b"
+            property string surface: "#1affffff"
+            property string surfaceHover: "#40000000"
             property string border: "#2e2e2e"
             property string borderStrong: "#555555"
             property string text: "#f2f2f2"

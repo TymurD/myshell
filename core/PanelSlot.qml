@@ -120,7 +120,7 @@ FocusScope {
         visible: s.fromPill && s.t > 0 && !s.settled
         opacity: Math.min(1, s.t * 4)
         radius: s.lerp(origin.h / 2, Theme.radius, s.t)
-        color: Qt.rgba(s.lerp(Theme.bg.r, Theme.bgSolid.r, s.t), s.lerp(Theme.bg.g, Theme.bgSolid.g, s.t), s.lerp(Theme.bg.b, Theme.bgSolid.b, s.t), s.lerp(Theme.bg.a, Theme.bgSolid.a, s.t))
+        color: Qt.rgba(s.lerp(Theme.bg.r, Theme.bgPanel.r, s.t), s.lerp(Theme.bg.g, Theme.bgPanel.g, s.t), s.lerp(Theme.bg.b, Theme.bgPanel.b, s.t), s.lerp(Theme.bg.a, Theme.bgPanel.a, s.t))
         border.color: Theme.border
         border.width: Theme.borderWidth
     }

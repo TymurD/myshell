@@ -40,7 +40,7 @@ MouseArea {
     Rectangle {
         anchors.fill: parent
         radius: root.toast ? Theme.radius : Theme.radiusSmall
-        color: root.toast ? Theme.bgSolid : root.containsMouse ? Theme.surfaceHover : Theme.surface
+        color: root.toast ? Theme.bgPanel : root.containsMouse ? Theme.surfaceHover : Theme.surface
         border.color: root.critical ? Theme.urgent : root.toast ? Theme.border : "transparent"
         border.width: Theme.borderWidth
         clip: true

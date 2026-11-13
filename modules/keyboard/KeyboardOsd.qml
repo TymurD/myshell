@@ -50,7 +50,7 @@ Scope {
             implicitWidth: row.implicitWidth + 2 * Theme.panelPadding + Theme.itemPadding
             implicitHeight: row.implicitHeight + 2 * Theme.panelPadding
             radius: height / 2
-            color: Theme.bgSolid
+            color: Theme.bgPanel
             border.color: Theme.border
             border.width: Theme.borderWidth
 
