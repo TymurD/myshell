@@ -9,6 +9,7 @@ import qs.theme
 // sibling types and `import qs.modules.<id>` resolve) when some statically loaded
 // file imports it. Import every panel folder here. Add new panel folders too.
 import qs.modules.battery
+import qs.modules.brightness
 import qs.modules.clipboard
 import qs.modules.dashboard
 import qs.modules.launcher

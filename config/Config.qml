@@ -26,6 +26,7 @@ Singleton {
     readonly property var session: adapter.session
     readonly property var sysstats: adapter.sysstats
     readonly property var timers: adapter.timers
+    readonly property var brightness: adapter.brightness
 
     FileView {
         path: Quickshell.shellPath("settings.json")
@@ -77,6 +78,7 @@ Singleton {
             property var session: ({})
             property var sysstats: ({})
             property var timers: ({})
+            property var brightness: ({})
         }
     }
 }

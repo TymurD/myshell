@@ -34,7 +34,7 @@ theme/Theme.qml      singleton, semantic color/size/font tokens from the active 
 theme/Anim.qml       singleton, animation durations/easings
 core/                shell plumbing: Registry, PanelManager, BarWindow, OverlayWindow (+ PanelSlot), Ipc
 components/          reusable dumb UI: Pill, BarButton, StyledText, Icon, PanelSurface, PlaceholderPanel
-services/            singletons holding state/logic (no UI): Time, KbLayout, Workspaces, Battery, Network,
+services/            singletons holding state/logic (no UI): Time, KbLayout, Workspaces, Battery, Brightness, Network,
                      Media, Notifications, Session, Apps, Clipboard, SysStats, Weather, Timers
 modules/<id>/        one folder per feature: <Name>Bar.qml, <Name>Panel.qml, optional <Name>Card.qml
 scripts/             helper shell scripts (share picker, palette apply/reload, ...)
@@ -71,7 +71,7 @@ Three pills (left / center / right), each one continuous capsule with no separat
 
 | left | center | right |
 |---|---|---|
-| session, workspaces, keyboard, battery | clock, timers, media | tray, network, notifications |
+| session, workspaces, keyboard, battery | clock, timers, media | brightness, tray, network, notifications |
 
 ## Panels and placement
 
@@ -111,6 +111,7 @@ Target names are lowercase nouns, functions are verbs. `panels` and `keyboard` l
 - `polkit preview|cancel|status`
 - `session lock|logout|suspend|reboot|shutdown|dryrun <bool>`
 - `notifications toggleDnd|clear|mute <app>|unmute <app>|invokeLatest <action>|status`
+- `brightness up|down|set <percent>|get`
 - `timers start <sec>|startNamed <name> <sec>|cancelAll|toggleStopwatch|next`
 - planned: `sharepicker pick <fifo>`, `theme set <palette>`
 
@@ -152,6 +153,7 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 - **Session:** set `session.dryRun: true` in settings.json while developing the session panel; commands are then only logged.
 - **dGPU:** `nvidia-smi` wakes the NVIDIA card. SysStats only queries it when `/sys/bus/pci/devices/<dgpuPci>/power/runtime_status` is `active`, and at most every `sysstats.gpuInterval`.
 - **Battery / TLP:** profiles are switched through `PowerProfiles` (Quickshell.Services.UPower). tlp-pd owns `net.hadess.PowerProfiles`, so Saver/Balanced/Performance map onto TLP profiles with no root or sudo. Battery data comes from `UPower.displayDevice`. Logic is in `services/Battery.qml`.
+- **Brightness:** `services/Brightness.qml` reads `/sys/class/backlight/<dev>/brightness` (polled, sysfs has no inotify) and writes with `brightnessctl` (logind, no root). `settings.json` → `brightness.device` ("" = first backlight), `step`, `min` (floor in %, so the screen never goes black). Scroll on the bar item to adjust.
 - **Volume:** not controlled. The media panel shows default sink volume read-only (Services.Pipewire).
 - **Weather:** Open-Meteo (no API key), coords in `settings.json` → `weather.latitude/longitude` (unset, so the cards ask for them). Never geolocate automatically.
 - **Clipboard:** needs `cliphist` (not installed yet) and the `wl-paste --watch cliphist store` exec.

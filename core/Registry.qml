@@ -39,6 +39,10 @@ Singleton {
                 bar: "media/MediaBar.qml",
                 panel: "media"
             },
+            brightness: {
+                bar: "brightness/BrightnessBar.qml",
+                panel: "brightness"
+            },
             tray: {
                 bar: "tray/TrayBar.qml",
                 panel: ""
@@ -84,6 +88,12 @@ Singleton {
             },
             media: {
                 url: "media/MediaPanel.qml",
+                placement: {
+                    fromIpc: "center-top"
+                }
+            },
+            brightness: {
+                url: "brightness/BrightnessPanel.qml",
                 placement: {
                     fromIpc: "center-top"
                 }
