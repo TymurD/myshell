@@ -31,6 +31,10 @@ Singleton {
                 bar: "clock/ClockBar.qml",
                 panel: "dashboard"
             },
+            timers: {
+                bar: "timers/TimersBar.qml",
+                panel: "timers"
+            },
             media: {
                 bar: "media/MediaBar.qml",
                 panel: "media"

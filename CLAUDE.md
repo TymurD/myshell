@@ -71,7 +71,7 @@ Three pills (left / center / right), each one continuous capsule with no separat
 
 | left | center | right |
 |---|---|---|
-| session, workspaces, keyboard, battery | clock, media | tray, network, notifications |
+| session, workspaces, keyboard, battery | clock, timers, media | tray, network, notifications |
 
 ## Panels and placement
 
@@ -175,7 +175,7 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 
 - [x] **P1 Skeleton**: config/theme/palette, Registry, PanelManager, OverlayWindow, 3-pill bar, IPC
 - [x] Per-pill panel placement, simultaneous close/open swap, drop-down open animation, attached panels
-- [x] Bar items: session, workspaces, keyboard, battery, clock (+ running timer), media (+ progress underline), tray, network, notifications (unread count / DND)
+- [x] Bar items: session, workspaces, keyboard, battery, clock, timers (next timer / stopwatch / alarm), media (+ progress underline), tray, network, notifications (unread count / DND)
 - [x] Battery panel with TLP power profiles
 - [x] Lock screen (WlSessionLock + PAM, blurred screencopy), polkit agent dialog, session menu (two-click confirm)
 - [x] Notifications: server, toasts, center grouped by app, DND, per-app mute, persisted history

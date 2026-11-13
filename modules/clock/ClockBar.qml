@@ -5,7 +5,7 @@ import qs.services
 import qs.core
 import qs.theme
 
-// Click → dashboard (see Registry). Right click → timers. Shows the next running timer.
+// Click → dashboard (see Registry). Right click → timers (also its own bar item).
 BarButton {
     onRightClicked: PanelManager.toggle("timers", "bar", pill)
 
@@ -16,15 +16,6 @@ BarButton {
         }
         StyledText {
             text: Time.format(Config.clock.format ?? "HH:mm")
-        }
-        Icon {
-            visible: Timers.nextTimer !== null
-            code: 0xF051B
-        }
-        StyledText {
-            visible: Timers.nextTimer !== null
-            text: Timers.nextTimerText
-            color: Theme.textDim
         }
     }
 }
