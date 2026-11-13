@@ -104,7 +104,10 @@ PanelWindow {
         // Activated once the panel has an input region: a grab on a surface with an
         // empty mask is cleared by Hyprland right away.
         active: root.shown && root.cur.settled
-        windows: [root, root.barWindow]
+        // Inside a grab Hyprland gives keyboard focus to the whitelisted surface under
+        // the pointer, so a whitelisted bar steals typing from the launcher/clipboard
+        // while hovered. Typing panels grab only the overlay; a bar click then closes them.
+        windows: root.cur.placement.keyboard ? [root] : [root, root.barWindow]
         onCleared: PanelManager.close()
     }
 
