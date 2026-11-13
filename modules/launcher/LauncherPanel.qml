@@ -27,8 +27,23 @@ PanelSurface {
 
     function reset(): void {
         search.text = "";
+        lastCursor = Qt.point(NaN, NaN);
         list.currentIndex = 0;
         list.positionViewAtBeginning();
+    }
+
+    // Hover selects a row only when the cursor actually moved. A cursor resting
+    // where the panel opens (or rows sliding under it while filtering) must not
+    // steal the keyboard selection.
+    property point lastCursor: Qt.point(NaN, NaN)
+
+    function hoverSelect(item: Item, index: int): void {
+        const g = item.mapToGlobal(item.mouseX, item.mouseY);
+        const p = Qt.point(Math.round(g.x), Math.round(g.y));
+        const moved = !isNaN(lastCursor.x) && (p.x !== lastCursor.x || p.y !== lastCursor.y);
+        lastCursor = p;
+        if (moved)
+            list.currentIndex = index;
     }
 
     Connections {
@@ -168,7 +183,8 @@ PanelSurface {
                 height: 52
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onEntered: list.currentIndex = index
+                onEntered: root.hoverSelect(row, index)
+                onPositionChanged: root.hoverSelect(row, index)
                 onClicked: root.launch(modelData)
 
                 RowLayout {
