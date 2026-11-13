@@ -15,6 +15,8 @@ Column {
 
     signal triggered
 
+    readonly property int count: entries.count
+
     spacing: 1
 
     QsMenuOpener {
@@ -23,7 +25,12 @@ Column {
     }
 
     Repeater {
+        id: entries
         model: opener.children
+        // A Column only lays out on polish, which never happens while the menu window is
+        // still hidden; TrayMenu waits for a real height before mapping, so force it.
+        onItemAdded: Qt.callLater(root.forceLayout)
+        onItemRemoved: Qt.callLater(root.forceLayout)
 
         Item {
             id: entry

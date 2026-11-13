@@ -35,7 +35,7 @@ BarButton {
                         modelData.secondaryActivate();
                     } else if (mouse.button === Qt.RightButton || modelData.onlyMenu) {
                         if (modelData.hasMenu)
-                            menu.shown && menu.trayItem === modelData ? menu.close() : menu.open(modelData, entry);
+                            menus.toggle(modelData, entry);
                     } else {
                         modelData.activate();
                     }
@@ -50,7 +50,9 @@ BarButton {
         }
     }
 
-    TrayMenu {
-        id: menu
+    TrayMenuHost {
+        id: menus
+        screen: root.barScreen
+        barWindow: root.QsWindow.window
     }
 }
