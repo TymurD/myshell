@@ -66,7 +66,7 @@ Singleton {
             battery: {
                 url: "battery/BatteryPanel.qml",
                 placement: {
-                    fromIpc: "center-top"
+                    fromIpc: "edge-left"
                 }
             },
             dashboard: {
