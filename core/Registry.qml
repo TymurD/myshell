@@ -93,7 +93,7 @@ Singleton {
             notifications: {
                 url: "notifications/NotificationsPanel.qml",
                 placement: {
-                    fromIpc: "center-top",
+                    fromIpc: "edge-right",
                     fillHeight: true
                 }
             },
