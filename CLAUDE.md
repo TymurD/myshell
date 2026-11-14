@@ -28,7 +28,7 @@ quickshell, hyprland, JetBrainsMono Nerd Font, playerctl (debug only, MPRIS is n
 ```
 shell.qml            ShellRoot: per-screen BarWindow + OverlayWindow, Ipc
 settings.default.json default settings (tracked): bar layout, panel placement overrides, module options
-tests/               node unit tests for pure JS helpers (`node --test tests/`)
+tests/               `node --test tests/` (pure JS helpers) and `tests/config.sh` (Config.qml load/write in a throwaway qs)
 palettes/*.json      color palettes; Config.palette picks one. generated.json = matugen output (gitignored)
 config/Config.qml    singleton: settings.default.json deep-merged with the user overrides; set()/reset() write them
 config/merge.js      pure merge/path helpers (tested by tests/merge.test.mjs)
