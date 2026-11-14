@@ -16,6 +16,7 @@ import qs.modules.launcher
 import qs.modules.media
 import qs.modules.network
 import qs.modules.session
+import qs.modules.settings
 import qs.modules.sysstats
 import qs.modules.timers
 import qs.modules.weather

@@ -133,6 +133,13 @@ Singleton {
                     fromIpc: "center-top"
                 }
             },
+            settings: {
+                url: "settings/SettingsPanel.qml",
+                placement: {
+                    fromIpc: "center",
+                    keyboard: true
+                }
+            },
             palette: {
                 url: "",
                 placement: {

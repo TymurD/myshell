@@ -1,0 +1,39 @@
+import QtQuick
+import qs.modules.settings
+import qs.components
+import qs.theme
+
+// Round icon-only action button (dims when disabled).
+MouseArea {
+    id: root
+
+    property int icon: 0
+    property real size: 30
+    property bool highlighted: false
+    property color iconColor: highlighted ? Theme.bgSolid : Theme.text
+
+    implicitWidth: size
+    implicitHeight: size
+    hoverEnabled: true
+    cursorShape: Qt.PointingHandCursor
+    opacity: enabled ? 1 : 0.3
+
+    Rectangle {
+        anchors.fill: parent
+        radius: height / 2
+        color: root.highlighted ? Theme.accent : root.containsMouse ? Theme.surfaceHover : "transparent"
+        border.color: root.highlighted ? Theme.accent : Theme.border
+        border.width: Theme.borderWidth
+        Behavior on color {
+            ColorAnimation {
+                duration: Anim.fast
+            }
+        }
+    }
+    Icon {
+        anchors.centerIn: parent
+        code: root.icon
+        color: root.iconColor
+        font.pixelSize: Theme.fontSizeSmall + 2
+    }
+}

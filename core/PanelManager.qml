@@ -81,6 +81,21 @@ Singleton {
         focusId = id;
     }
 
+    // Switch the open panel to `id` in the same spot (keeps source, pill and screen),
+    // e.g. the dashboard's settings button. Opens normally when nothing is open.
+    function swap(id: string): void {
+        if (!isOpen) {
+            open(id, "ipc", null);
+            return;
+        }
+        if (!Registry.hasPanel(id)) {
+            console.warn("PanelManager: unknown panel", id);
+            return;
+        }
+        openId = hostOf(id);
+        focusId = id;
+    }
+
     function close(): void {
         openId = "";
     }

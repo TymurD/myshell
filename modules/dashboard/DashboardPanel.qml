@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import qs.modules.dashboard
 import qs.components
 import qs.config
+import qs.core
 import qs.services
 import qs.theme
 
@@ -37,9 +38,19 @@ PanelSurface {
             Layout.alignment: Qt.AlignTop
             spacing: 2
 
-            StyledText {
-                text: Time.format("dddd")
-                color: Theme.textDim
+            RowLayout {
+                Layout.fillWidth: true
+
+                StyledText {
+                    text: Time.format("dddd")
+                    color: Theme.textDim
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                SettingsButton {
+                    onClicked: PanelManager.swap("settings")
+                }
             }
             StyledText {
                 text: Time.format("d MMMM")
