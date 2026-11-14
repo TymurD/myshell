@@ -15,7 +15,7 @@ qs -c myshell ipc call panels toggle dashboard
 qs -c myshell kill
 ```
 
-- Quickshell hot-reloads on every file save; `settings.json` and palettes are watched too.
+- Quickshell hot-reloads on every file save; both settings files and palettes are watched too.
 - LSP: Quickshell writes `.qmlls.ini` (gitignored) when the file exists. Run `touch .qmlls.ini` once, then `qmlls` works.
 - After a change, start the shell and check for a clean log (`Configuration Loaded` with no QML errors). Use `grim` to screenshot if visual verification is needed.
 
@@ -27,9 +27,11 @@ quickshell, hyprland, JetBrainsMono Nerd Font, playerctl (debug only, MPRIS is n
 
 ```
 shell.qml            ShellRoot: per-screen BarWindow + OverlayWindow, Ipc
-settings.json        user settings (tracked): bar layout, panel placement overrides, module options
+settings.default.json default settings (tracked): bar layout, panel placement overrides, module options
+tests/               node unit tests for pure JS helpers (`node --test tests/`)
 palettes/*.json      color palettes; Config.palette picks one. generated.json = matugen output (gitignored)
-config/Config.qml    singleton, reads settings.json (FileView + JsonAdapter)
+config/Config.qml    singleton: settings.default.json deep-merged with the user overrides; set()/reset() write them
+config/merge.js      pure merge/path helpers (tested by tests/merge.test.mjs)
 theme/Theme.qml      singleton, semantic color/size/font tokens from the active palette
 theme/Anim.qml       singleton, animation durations/easings
 core/                shell plumbing: Registry, PanelManager, BarWindow, OverlayWindow (+ PanelSlot), Ipc
@@ -61,13 +63,13 @@ Every feature has a **minimal** bar version and an **expanded** panel version.
 ### Adding a module
 1. Create `modules/<id>/` with the Bar and/or Panel file.
 2. Register it in `core/Registry.qml`: `modules.<id> = { bar, panel }` and/or `panels.<panelId> = { url, placement }`. `url: ""` shows `PlaceholderPanel`.
-3. Put the id into `settings.json` → `bar.left|center|right` (order = display order).
+3. Put the id into `settings.default.json` → `bar.left|center|right` (order = display order) if it should be on by default; otherwise users enable it from the settings panel's Hidden column.
 4. If it needs data, add `services/<Name>.qml`.
 5. If it should be keybindable, it already is: `qs -c myshell ipc call panels toggle <panelId>`.
 
 ## Bar
 
-Three pills (left / center / right), each one continuous capsule with no separators between modules. Contents come from `settings.json` `bar.*`. Default:
+Three pills (left / center / right), each one continuous capsule with no separators between modules. Contents come from settings `bar.*`. Default:
 
 | left | center | right |
 |---|---|---|
@@ -77,8 +79,8 @@ Three pills (left / center / right), each one continuous capsule with no separat
 
 - Only one panel is open at a time (`core/PanelManager.qml`: `open/toggle/close(id, source, pill)`). The exception is launcher + clipboard, which open as a pair.
 - Panels render in a per-screen fullscreen transparent `OverlayWindow`. Its input mask covers only the visible panel. Click-outside (HyprlandFocusGrab) and Esc close the panel.
-- **Opened from the bar, position is decided by the pill, not the button.** Every button in one pill opens its panel in the same spot. Clicking another button while a panel is open rolls the old panel up and unrolls the new one at the same time. `OverlayWindow` has two `core/PanelSlot.qml`s that take turns; each snapshots its panel's source/anchor and has its own progress `t`. Never lerp geometry from one panel's rect to another's; it reads as the panel sliding across the bar. The spot per pill is in `settings.json` → `bar.panelAt`. Defaults: left → `"edge-left"`, center → `"pill"` (top, centered under the center pill, used by the dashboard), right → `"edge-right"`. Panels always hang from the top, just below the bar.
-- Per-panel placement lives in `Registry.panels[id].placement` and can be overridden in `settings.json` → `panels.<id>`:
+- **Opened from the bar, position is decided by the pill, not the button.** Every button in one pill opens its panel in the same spot. Clicking another button while a panel is open rolls the old panel up and unrolls the new one at the same time. `OverlayWindow` has two `core/PanelSlot.qml`s that take turns; each snapshots its panel's source/anchor and has its own progress `t`. Never lerp geometry from one panel's rect to another's; it reads as the panel sliding across the bar. The spot per pill is in settings → `bar.panelAt`. Defaults: left → `"edge-left"`, center → `"pill"` (top, centered under the center pill, used by the dashboard), right → `"edge-right"`. Panels always hang from the top, just below the bar.
+- Per-panel placement lives in `Registry.panels[id].placement` and can be overridden in settings → `panels.<id>`:
   - `fromBar` (optional): overrides the pill's spot for this one panel. Avoid it, since it breaks the "same place per pill" rule.
   - `fromIpc`: `"center-top"` (default for keybinds) | `"center"` | `"edge-left"` | `"edge-right"`.
   - `"center"` = vertically centered on screen (launcher, session menu via keybind).
@@ -91,22 +93,25 @@ Three pills (left / center / right), each one continuous capsule with no separat
 ## Theme & animation rules
 
 - **Never hard-code colors, font sizes, radii or durations in modules.** Use `Theme.*` and `Anim.*`. Add a token if one is missing. Font scale: `fontSizeSmall` 13 · `fontSize` 17 · `fontSizeLarge` 22 · `fontSizeXL` 32 · `fontSizeDisplay` 44 · `fontSizeHuge` 110.
-- Palette file = flat JSON of token → `#aarrggbb`/`#rrggbb` (see `palettes/default.json`). Switching = change `palette` in settings.json (later: palette panel + `theme set` IPC).
+- Palette file = flat JSON of token → `#aarrggbb`/`#rrggbb` (see `palettes/default.json`). Switching = `palette` in settings (settings panel → General; later: palette panel + `theme set` IPC).
 - Planned matugen flow: wallpaper → `matugen` → `palettes/generated.json` + templates for other apps → `scripts/apply-palette` reloads them.
 - Icons: Nerd Font glyphs via `Icon { code: 0xF0150 }`.
 
 ## Config vs state
 
-- `settings.json` (repo, tracked): things the user edits by hand.
+- Settings = `settings.default.json` (repo, tracked defaults) deep-merged with the user's overrides in `$XDG_CONFIG_HOME/myshell/settings.json` (default `~/.config/myshell/settings.json`, untracked). Objects merge per key; arrays and scalars replace whole. Modules only read `Config.<section>` and never care which file a value came from.
+- The user file holds **only differences from the defaults**. `Config.set(path, value)` (dotted path, e.g. `"bar.left"`) drops the key when the value equals the default; `Config.reset(path)` removes it. The settings panel (`modules/settings/`, gear in the dashboard, `panels toggle settings`) writes only through these. Users may also hand-edit the file; it hot-reloads (polled every 2 s while it doesn't exist, since FileView can't watch a missing file). A file with invalid JSON is ignored (defaults apply) and `set` refuses to overwrite it.
+- Change a default for everyone in `settings.default.json`; never commit personal tweaks there.
 - Runtime state via `Quickshell.statePath("<name>.json")`, which resolves to `~/.local/state/quickshell/by-shell/<shell-id>/`: `notifications.json` (history, DND, mutes), `timers.json` (timers/alarms, stored as end timestamps), `apps.json` (launcher frequency), `weather.json` (cache). Write it from services only. Every running instance of the same shell shares these files, so run only one real instance.
 - Clipboard image thumbnails go to `Quickshell.cachePath("clipboard")`.
 
 ## IPC
 
-Target names are lowercase nouns, functions are verbs. `panels` and `keyboard` live in `core/Ipc.qml`; every other target is declared by its own module/service with an `IpcHandler`. Run `qs -c myshell ipc show` for the live list.
+Target names are lowercase nouns, functions are verbs. `panels`, `config` and `keyboard` live in `core/Ipc.qml`; every other target is declared by its own module/service with an `IpcHandler`. Run `qs -c myshell ipc show` for the live list.
 
 - `panels toggle|open <id>`, `panels close`, `panels list`
 - `keyboard next`
+- `config get <path>|set <path> <json>|reset <path>|userPath` (writes the user overrides). `qs ipc call` mangles arguments that start with `[` or contain commas, so prefix JSON with a space: `config set bar.right ' ["tray","network"]'`
 - `lock lock|preview|closePreview` (use `preview` for testing; it is a plain overlay, not a session lock)
 - `polkit preview|cancel|status`
 - `session lock|logout|suspend|reboot|shutdown|dryrun <bool>`
@@ -150,12 +155,12 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 - **Screenshare picker:** yes, via xdg-desktop-portal-hyprland. In `~/.config/hypr/xdph.conf` set `screencopy { custom_picker_binary = <repo>/scripts/share-picker }`. The script creates a FIFO and calls `ipc call sharepicker pick <fifo>`. The QML picker writes the selection (`[SELECTION]/screen:<name>` or `window:<handle>`, so check the xdph source for the exact format) into the FIFO, and the script prints it to stdout.
 - **Notifications:** only one `NotificationServer` can own the D-Bus name, so kill mako first. A QS instance that fails to register retries whenever the name frees up.
 - **Polkit:** while polkit-gnome runs, Quickshell logs "An authentication agent already exists" once. That's expected.
-- **Session:** set `session.dryRun: true` in settings.json while developing the session panel; commands are then only logged.
+- **Session:** set `session.dryRun: true` (settings panel → General) while developing the session panel; commands are then only logged.
 - **dGPU:** `nvidia-smi` wakes the NVIDIA card. SysStats only queries it when `/sys/bus/pci/devices/<dgpuPci>/power/runtime_status` is `active`, and at most every `sysstats.gpuInterval`.
 - **Battery / TLP:** profiles are switched through `PowerProfiles` (Quickshell.Services.UPower). tlp-pd owns `net.hadess.PowerProfiles`, so Saver/Balanced/Performance map onto TLP profiles with no root or sudo. Battery data comes from `UPower.displayDevice`. Logic is in `services/Battery.qml`.
-- **Brightness:** `services/Brightness.qml` reads `/sys/class/backlight/<dev>/brightness` (polled, sysfs has no inotify) and writes with `brightnessctl` (logind, no root). `settings.json` → `brightness.device` ("" = first backlight), `step`, `min` (floor in %, so the screen never goes black). Scroll on the bar item to adjust.
+- **Brightness:** `services/Brightness.qml` reads `/sys/class/backlight/<dev>/brightness` (polled, sysfs has no inotify) and writes with `brightnessctl` (logind, no root). settings → `brightness.device` ("" = first backlight), `step`, `min` (floor in %, so the screen never goes black). Scroll on the bar item to adjust.
 - **Volume:** not controlled. The media panel shows default sink volume read-only (Services.Pipewire).
-- **Weather:** Open-Meteo (no API key), coords in `settings.json` → `weather.latitude/longitude` (unset, so the cards ask for them). Never geolocate automatically.
+- **Weather:** Open-Meteo (no API key), coords in settings → `weather.latitude/longitude` (unset, so the cards ask for them). Never geolocate automatically.
 - **Clipboard:** needs `cliphist` (not installed yet) and the `wl-paste --watch cliphist store` exec.
 
 ## Gotchas
@@ -184,6 +189,8 @@ Edit `~/.config/hypr/hyprland.lua` only when the user asks. Never remove waybar/
 - [x] Launcher (fuzzy + frequency) + clipboard history (cliphist, image thumbnails) attached on its left; keyboard-layout OSD
 - [x] Media panel (art, seek, controls, shuffle/loop, player switcher, read-only volume); network panel (wifi list, connect/password, forget, wired, IP, rates)
 - [x] Dashboard (calendar center, configurable card columns), SysStats cards (CPU/GPU/RAM/temps), weather + forecast, timers/stopwatch/alarms
+- [x] Settings panel: bar layout (reorder / move between pills / hide), panel spot per pill, dashboard cards, general options; tracked defaults + untracked user overrides
+- [ ] Bar on bottom / left / right edges (left/right need a vertical variant of every bar module)
 - [ ] **Switch-over**: install cliphist, set allow_session_lock_restore, swap waybar/mako/polkit-gnome/fuzzel/hyprlock for QS in hyprland.lua, then check typing, clicks and hover by hand (none of it could be automated)
 - [ ] **P7** Palette center (switch/save palettes, `theme set` IPC), screenshare picker, wallpaper picker + matugen + app reload scripts
 - [ ] Workspaces: app icons per workspace
