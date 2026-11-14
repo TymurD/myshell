@@ -141,6 +141,17 @@ Singleton {
             }
         })
 
+    // Dashboard cards (settings → dashboard.left/right). id → path relative to modules/.
+    readonly property var cards: ({
+            cpu: "sysstats/CpuCard.qml",
+            gpu: "sysstats/GpuCard.qml",
+            memory: "sysstats/MemoryCard.qml",
+            temps: "sysstats/TempsCard.qml",
+            weather: "weather/WeatherCard.qml",
+            forecast: "weather/ForecastCard.qml",
+            timers: "timers/TimersCard.qml"
+        })
+
     function barUrl(id: string): string {
         const m = modules[id];
         if (!m) {

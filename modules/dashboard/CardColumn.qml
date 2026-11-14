@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import qs.core
 import qs.modules.dashboard
 import qs.theme
 
@@ -11,16 +12,7 @@ ColumnLayout {
 
     property var ids: []
 
-    // card id → path relative to modules/
-    readonly property var cards: ({
-            cpu: "sysstats/CpuCard.qml",
-            gpu: "sysstats/GpuCard.qml",
-            memory: "sysstats/MemoryCard.qml",
-            temps: "sysstats/TempsCard.qml",
-            weather: "weather/WeatherCard.qml",
-            forecast: "weather/ForecastCard.qml",
-            timers: "timers/TimersCard.qml"
-        })
+    readonly property var cards: Registry.cards
 
     readonly property var known: {
         const out = [];
