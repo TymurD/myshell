@@ -56,6 +56,11 @@ Singleton {
     property var overrides: ({})
     property bool userFileBroken: false
     property bool userFileMissing: false
+    // Writes wait for the user file's first load (or they would drop what is saved in
+    // it), and loads are ignored while our own write is in flight.
+    property bool userLoaded: false
+    property var queued: []
+    property bool writing: false
 
     readonly property var defaults: Merge.deepMerge(fallback, defaultsFile)
     readonly property var merged: Merge.deepMerge(defaults, overrides)
@@ -88,11 +93,39 @@ Singleton {
     }
 
     function set(path: string, value: var): void {
+        if (!userLoaded) {
+            queued = queued.concat([{ path, value }]);
+            return;
+        }
         write(Merge.overridesAfterSet(defaults, overrides, path, value));
     }
 
     function reset(path: string): void {
+        if (!userLoaded) {
+            queued = queued.concat([{ path, reset: true }]);
+            return;
+        }
         write(Merge.withoutPath(overrides, path));
+    }
+
+    // Assign only on a real change: every assignment re-emits all Config sections.
+    function setOverrides(v: var): void {
+        if (!Merge.deepEqual(overrides, v))
+            overrides = v;
+    }
+
+    function firstLoadDone(): void {
+        if (userLoaded)
+            return;
+        userLoaded = true;
+        const q = queued;
+        queued = [];
+        for (const op of q) {
+            if (op.reset)
+                reset(op.path);
+            else
+                set(op.path, op.value);
+        }
     }
 
     function write(next: var): void {
@@ -101,6 +134,7 @@ Singleton {
             return;
         }
         overrides = next;
+        writing = true;
         pendingText = JSON.stringify(next, null, 2) + "\n";
         if (!mkdir.running)
             mkdir.running = true;
@@ -125,11 +159,11 @@ Singleton {
         id: mkdir
         command: ["mkdir", "-p", root.userDir]
         onExited: code => {
-            if (code !== 0) {
+            if (code === 0)
+                userFile.setText(root.pendingText);
+            else
                 console.warn("Config: could not create", root.userDir);
-                return;
-            }
-            userFile.setText(root.pendingText);
+            root.writing = false;
         }
     }
 
@@ -161,18 +195,24 @@ Singleton {
         printErrors: false
         onFileChanged: reload()
         onLoaded: {
+            if (root.writing)
+                return;
             const v = root.parse(text(), root.userPath);
             root.userFileMissing = false;
             root.userFileBroken = v === null;
-            root.overrides = v ?? {};
+            root.setOverrides(v ?? {});
+            root.firstLoadDone();
         }
         onLoadFailed: err => {
+            if (root.writing)
+                return;
             // Missing file = no overrides.
             root.userFileBroken = false;
             root.userFileMissing = err === FileViewError.FileNotFound;
-            root.overrides = {};
+            root.setOverrides({});
             if (err !== FileViewError.FileNotFound)
                 console.warn("Config: failed to load", root.userPath + ":", FileViewError.toString(err));
+            root.firstLoadDone();
         }
     }
 }
